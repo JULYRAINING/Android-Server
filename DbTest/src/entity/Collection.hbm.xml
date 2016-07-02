@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 2015-12-5 12:46:46 by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping package = "entity">
+    <class name="Collection" table="collection" catalog="CUP">
+        <id name="id" type="int">
+            <column name="id" />
+            <generator class="identity" />
+        </id>
+        <many-to-one name = "message" class = "entity.Message">
+        	<column name = "messageId"></column>
+        </many-to-one>
+        <many-to-one name = "user" class = "entity.UserDetail">
+        	<column name = "userId"></column>
+        </many-to-one>
+        <property name="time" type="timestamp">
+            <column name="time"  not-null="true" />
+        </property>
+    </class>
+</hibernate-mapping>

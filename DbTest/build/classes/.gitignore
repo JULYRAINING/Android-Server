@@ -1,0 +1,14 @@
+/beans/
+/com/
+/dao/
+/entity/
+/hibernate/
+/hibernate.cfg.xml
+/hibernate.reveng.xml
+/init/
+/interceptor/
+/log4j.properties
+/service/
+/springConfig.xml
+/test/
+/utils/

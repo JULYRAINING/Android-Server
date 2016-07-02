@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:mvc="http://www.springframework.org/schema/mvc"
+
+
+
+	xsi:schemaLocation="
+        http://www.springframework.org/schema/beans     
+        http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context-4.0.xsd
+        http://www.springframework.org/schema/aop
+    	http://www.springframework.org/schema/aop/spring-aop-4.0.xsd
+    	http://www.springframework.org/schema/tx
+    	http://www.springframework.org/schema/tx/spring-tx-4.0.xsd
+    	    	http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd">
+
+
+
+	<context:component-scan base-package="com,init" />
+	
+	<bean id="dataSource"
+		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName" value="com.mysql.jdbc.Driver"></property>
+		<property name="url" value="jdbc:mysql://localhost/cup?useUnicode=true&amp;characterEncoding=UTF-8"></property>
+		<property name="username" value="root"></property>
+		<property name="password" value="HEAVEN"></property>
+	</bean>
+
+	<bean id="multipartResolver"
+		class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<property name="maxUploadSize" value="104857600" />
+		<property name="maxInMemorySize" value="4096" />
+	</bean>
+
+	<!-- 配置SessionFactory -->
+	<bean id="sessionFactory"
+		class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<property name="hibernateProperties">
+			<props>
+				<prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop>
+				<prop key="hibernate.hbm2ddl.auto">update</prop>
+				<prop key="hibernate.show_sql">false</prop>
+				<prop key="hibernate.format_sql">false</prop>
+				<prop key="hibernate.connection.autocommit">true</prop>
+				<prop key="current_session_context_class">thread</prop>
+			</props>
+		</property>
+		<property name="mappingResources">
+			<list>
+				<value>entity\Category.hbm.xml</value>
+
+				<value>entity\Collection.hbm.xml</value>
+
+				<value>entity\Comment.hbm.xml</value>
+
+				<value>entity\Message.hbm.xml</value>
+
+				<value>entity\UserDetail.hbm.xml</value>
+
+				<value>entity\UserValidate.hbm.xml</value>
+				
+				<value>entity\TokenValidate.hbm.xml</value>
+			</list>
+		</property>
+	</bean>
+
+
+
+	<!-- 注入userService -->
+	<bean id="userDao" class="com.daoImpl.UserDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+	<bean id="userService" class="com.serviceImpl.UserServiceImpl">
+		<property name="userDao" ref="userDao"></property>
+	</bean>
+
+	<!-- 注入categoryService -->
+	<bean id="categoryDao" class="com.daoImpl.CategoryDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+	<bean id="categoryService" class="com.serviceImpl.CategoryServiceImpl">
+		<property name="categoryDao" ref="categoryDao"></property>
+	</bean>
+
+	<!-- 注入collectionService -->
+	<bean id="collectionDao" class="com.daoImpl.CollectionDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+	<bean id="collectionService" class="com.serviceImpl.CollectionServiceImpl">
+		<property name="collectionDao" ref="collectionDao"></property>
+	</bean>
+
+	<!-- 注入commentService -->
+	<bean id="commentDao" class="com.daoImpl.CommentDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+	<bean id="commentService" class="com.serviceImpl.CommentServiceImpl">
+		<property name="commentDao" ref="commentDao"></property>
+	</bean>
+
+	<!-- 注入messageService -->
+	<bean id="messageDao" class="com.daoImpl.MessageDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+	<bean id="messageService" class="com.serviceImpl.MessageServiceImpl">
+		<property name="messageDao" ref="messageDao"></property>
+	</bean>
+	<!-- 注入TokenValidateService -->
+	<bean id = "tokenValidateDao" class = "com.daoImpl.TokenValidateDaoImpl">
+		<property name = "sessionFactory" ref = "sessionFactory"/>
+	</bean>
+	<bean id = "tokenValidateService" class = "com.serviceImpl.TokenValidateServiceImpl">
+		<property name = "tokenValidateDao" ref = "tokenValidateDao"/>
+	</bean>
+<!-- 注入UserValidateService -->
+	<bean id = "userValidateDao" class = "com.daoImpl.UserValidateDaoImpl">
+		<property name = "sessionFactory" ref = "sessionFactory"/>
+	</bean>
+	<bean id = "userValidateService" class = "com.serviceImpl.UserValidateServiceImpl">
+		<property name = "userValidateDao" ref = "userValidateDao"/>
+	</bean>
+	<!-- 注入TransactionManager -->
+	<bean id="transactionManager"
+		class="org.springframework.orm.hibernate4.HibernateTransactionManager">
+		<property name="sessionFactory" ref="sessionFactory" />
+	</bean>
+
+
+
+
+	<!-- 配置事务的通知 -->
+	<tx:advice id="txAdvice" transaction-manager="transactionManager">
+		<tx:attributes>
+			<!-- propagation :事务传播行为 isolation :事务的隔离级别 read-only :只读 rollback-for:发生哪些异常回滚 
+				no-rollback-for :发生哪些异常不回滚 timeout :过期信息 -->
+			<tx:method name="*" propagation="REQUIRED" read-only="false" />
+		</tx:attributes>
+	</tx:advice>
+
+	<!-- 配置切面 -->
+	<aop:config>
+		<!-- 配置切入点 -->
+		<!-- aop:pointcut语句的问题，之前没有切进去 -->
+		<aop:pointcut expression="execution(* *.*+.*(..))" id="pointcut1" />
+		<!-- 配置切面 -->
+
+
+		<aop:advisor advice-ref="txAdvice" pointcut-ref="pointcut1" />
+
+	</aop:config>
+	<!-- 开启注解事务 -->
+	<tx:annotation-driven transaction-manager="transactionManager" />
+<!-- 
+	<bean id="urlMapping"
+		class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+		<property name="interceptors">
+			<list>
+				<ref bean="userInterceptor" />
+			</list>
+		</property>
+		<property name="mappings">
+			<props>
+				<prop key="/download/getJsonData.do">download</prop>
+			</props>
+		</property>
+	</bean>
+	<bean id="download" class="com.controller.DownloadController" />
+	 -->
+	 
+	<bean id="userInterceptor" class="interceptor.UserHandlerInterceptor"></bean>
+	
+
+	<bean id="annotationMapper"
+		class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping">
+		<property name="interceptors">
+			<list>
+				<ref bean="userInterceptor" />
+			</list>
+		</property>
+	</bean>
+
+</beans>

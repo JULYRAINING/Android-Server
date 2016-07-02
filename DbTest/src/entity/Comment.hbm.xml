@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 2015-12-5 12:46:46 by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping package = "entity">
+    <class name="Comment" table="comment" catalog="CUP">
+        <id name="commentId" type="int">
+            <column name="commentId" />
+            <generator class="identity" />
+        </id>
+        
+        
+        
+        <property name="content" type="string">
+            <column name="content" length="2000" />
+        </property>
+        
+        <property name="time" type="timestamp">
+            <column name="time" />
+        </property>
+        <property name = "userName" type = "string">
+        	<column name = "userName" length = "200"/>
+        </property>
+        <property name = "refCommentUserName" type = "string">
+        	<column name = "refCommentUserName" length = "200"/>
+        </property>
+        
+        <many-to-one name="user" class="entity.UserDetail" lazy = "false">
+			<column name="userId"></column>
+		</many-to-one>
+		<many-to-one name="message" class="entity.Message" lazy = "false">
+			<column name="messageId"></column>
+		</many-to-one>
+		
+		<set name = "childComments" inverse = "true" lazy = "true" cascade = "all">
+			<key column = "refCommentId"></key>
+			<one-to-many class = "entity.Comment"></one-to-many>
+		</set>
+		
+		<many-to-one name = "refComment" class = "entity.Comment">
+			<column name = "refCommentId"></column>
+		</many-to-one>
+		
+    </class>
+</hibernate-mapping>

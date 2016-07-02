@@ -1,0 +1,51 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 2015-12-5 12:46:46 by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping package = "entity">
+    <class name="UserDetail" table="userdetail" catalog="CUP">
+        <id name="userId" type="int">
+            <column name="userId" />
+            <generator class="assigned" />
+        </id>
+        <property name="minor" type="string">
+            <column name="minor" />
+        </property>
+        <property name="major" type="string">
+            <column name="major" />
+        </property>
+        <property name="grade" type="java.lang.Integer">
+            <column name="grade" />
+        </property>
+        <property name="name" type="string">
+            <column name="name" not-null="true" />
+        </property>
+        <property name="signature" type="string">
+            <column name="signature" length="2000" />
+        </property>
+        <property name="gender" type="int">
+            <column name="gender" />
+        </property>
+        <property name="image" type="string">
+            <column name="image" />
+        </property>
+        <set name = "messages" inverse = "true" lazy = "false" cascade = "all">
+        	<key>
+        		<column name = "userId"></column>
+        	</key>
+        	<one-to-many class = "entity.Message"></one-to-many>
+        </set>
+        <set name = "comments" inverse = "true" lazy = "false" cascade = "all">
+        	<key>
+        		<column name = "userId"></column>
+        	</key>
+        	<one-to-many class = "entity.Comment"></one-to-many>
+        </set>
+        <set name = "collections" inverse = "true" lazy = "false" cascade = "all">
+        	<key>
+        		<column name = "userId"></column>
+        	</key>
+        	<one-to-many class = "entity.Collection"></one-to-many>
+        </set>
+    </class>
+</hibernate-mapping>

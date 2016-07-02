@@ -1,0 +1,6 @@
+实体联系说明：
+Category与Message为一对多
+UserDetail与Message为一对多
+Comment与Message为多对一
+UserDetail与UserValidate为一对一
+Collection。。。。独立，有一组联合主键，抽取为CollectionId类
